@@ -20,7 +20,8 @@
                     style="height: 400px"
                     class="mt-3"
             >
-                <gmap-marker
+
+                <gmap-marker v-if="mark_exists"
                         :position="position"
                         :draggable="true"
                         @dragend="setPosition"
@@ -28,6 +29,7 @@
 
             </gmap-map>
 
+            <span @click="clearMarker" style="cursor:pointer">[х] Clear marker</span>
         </template>
     </default-field>
 </template>
@@ -42,6 +44,7 @@ export default {
 
     data() {
         return {
+            mark_exists: false,
             address: null,
             latitude: null,
             longitude: null
@@ -73,6 +76,8 @@ export default {
         * Set the initial value for the field
         */
         setInitialValue() {
+            this.mark_exists  = this.field.mark_exists;
+
             this.latitude  = this.field.latitude;
             this.longitude = this.field.longitude;
         },
@@ -81,8 +86,10 @@ export default {
          * Fill the given FormData object with the field's internal value.
          */
         fill(formData) {
-            formData.append(this.latitudeAttr, this.latitude);
-            formData.append(this.longitudeAttr, this.longitude);
+            if(this.mark_exists) {
+                formData.append(this.latitudeAttr, this.latitude);
+                formData.append(this.longitudeAttr, this.longitude);
+            }
         },
 
         setPlace(place) {
@@ -92,8 +99,14 @@ export default {
         },
 
         setPosition(position) {
+            this.mark_exists  = true;
+
             this.latitude  = position.latLng.lat();
             this.longitude = position.latLng.lng();
+        },
+
+        clearMarker(){
+            this.mark_exists  = false;
         },
     },
 }

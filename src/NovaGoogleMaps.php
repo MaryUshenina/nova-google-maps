@@ -60,9 +60,11 @@ class NovaGoogleMaps extends Field
         if (is_null($latitude) && is_null($longitude)) {
             $latitude = config('nova-google-maps.default_latitude');
             $longitude = config('nova-google-maps.default_longitude');
+            $mark_exists = false;
         }
 
         return $this->withMeta([
+            'mark_exists' => $mark_exists ?? true,
             'latitude'  => floatval($latitude),
             'longitude' => floatval($longitude)
         ]);

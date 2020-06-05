@@ -30889,6 +30889,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 
@@ -30899,6 +30901,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
+            mark_exists: false,
             address: null,
             latitude: null,
             longitude: null
@@ -30931,6 +30934,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         * Set the initial value for the field
         */
         setInitialValue: function setInitialValue() {
+            this.mark_exists = this.field.mark_exists;
+
             this.latitude = this.field.latitude;
             this.longitude = this.field.longitude;
         },
@@ -30940,8 +30945,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
          * Fill the given FormData object with the field's internal value.
          */
         fill: function fill(formData) {
-            formData.append(this.latitudeAttr, this.latitude);
-            formData.append(this.longitudeAttr, this.longitude);
+            if (this.mark_exists) {
+                formData.append(this.latitudeAttr, this.latitude);
+                formData.append(this.longitudeAttr, this.longitude);
+            }
         },
         setPlace: function setPlace(place) {
             this.address = place.formatted_address;
@@ -30949,8 +30956,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.longitude = place.geometry.location.lng();
         },
         setPosition: function setPosition(position) {
+            this.mark_exists = true;
+
             this.latitude = position.latLng.lat();
             this.longitude = position.latLng.lng();
+        },
+        clearMarker: function clearMarker() {
+            this.mark_exists = false;
         }
     }
 });
@@ -30997,12 +31009,23 @@ var render = function() {
               on: { click: _vm.setPosition }
             },
             [
-              _c("gmap-marker", {
-                attrs: { position: _vm.position, draggable: true },
-                on: { dragend: _vm.setPosition }
-              })
+              _vm.mark_exists
+                ? _c("gmap-marker", {
+                    attrs: { position: _vm.position, draggable: true },
+                    on: { dragend: _vm.setPosition }
+                  })
+                : _vm._e()
             ],
             1
+          ),
+          _vm._v(" "),
+          _c(
+            "span",
+            {
+              staticStyle: { cursor: "pointer" },
+              on: { click: _vm.clearMarker }
+            },
+            [_vm._v("[х] Clear marker")]
           )
         ],
         1
